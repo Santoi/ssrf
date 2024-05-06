@@ -49,9 +49,36 @@
 </div>
 
 <script>
+    function sendUrlToServer(url) {
+        // Construct the URL with the input value as a query parameter
+        const apiUrl = `http://168.138.234.134:9090/index.php?inputUrl=${encodeURIComponent(url)}`;
+
+        // Make the GET request
+        fetch(apiUrl, {
+            method: 'GET',
+            mode: 'cors', // Enable CORS
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response data here
+                console.log('Response from server:', data);
+            })
+            .catch(error => {
+                // Handle errors here
+                console.error('Error sending URL to server:', error);
+            });
+    }
+
     document.getElementById('submit-btn').addEventListener('click', function() {
         var url = document.getElementById('url-input').value;
         console.log("URL entered: ", url);
+        const parsedUrl = sendUrlToServer(url);
+        console.log("Parsed URL: ", parsedUrl);
     });
 </script>
 
