@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+import server
+import sigint_handler
+import arg_parser
+arguments = arg_parser.Arguments('server-run')
+
+ip_addr = arguments.get_arg('host')
+port = arguments.get_arg('port')
+
+# Catch SIGINT
+sigint_handler.activate()
+# init server
+server = server.Server(ip_addr, port)
+server.run()
+
