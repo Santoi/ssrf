@@ -9,21 +9,24 @@ class Server:
         self._skt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._address = (address, port)
         self._skt.bind(self._address)
+        self._skt.listen(8)
         # Catch SIGINT
         self._activate_sigint_handler()
         self._active_clients = []
+
 
     def run(self):
         print("Server listening in " + self._address[0] + ":" + str(self._address[1]))
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             while True:
                 # Receive incoming messages and submit them to the thread pool
-                data, addr = self._skt.recvfrom(self._BUFSIZE)
-                future = executor.submit(self.handle_request, data, addr)
+                (client_skt, addr) = self._skt.accept()
+                data = self._skt.recv(self._BUFSIZE)
+                future = executor.submit(self.handle_request, data, client_skt)
                 future.add_done_callback(lambda f: f.result())
 
-    def handle_request(self, data, client_addr):
-        pass
+    def handle_request(self, data, client_skt):
+        client_skt.close()
 
     def _activate_sigint_handler(self):
         signal.signal(signal.SIGINT, self._signal_handler)
