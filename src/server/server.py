@@ -1,4 +1,5 @@
 import concurrent.futures
+import signal
 import socket
 
 class Server:
@@ -8,6 +9,8 @@ class Server:
         self._skt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._address = (address, port)
         self._skt.bind(self._address)
+        # Catch SIGINT
+        self._activate_sigint_handler()
         self._active_clients = []
 
     def run(self):
@@ -22,4 +25,12 @@ class Server:
     def handle_request(self, data, client_addr):
         pass
 
+    def _activate_sigint_handler(self):
+        signal.signal(signal.SIGINT, self._signal_handler)
+
+    def _signal_handler(self):
+        res = input("Do you really want to exit? y/n ")
+        if res == "y":
+            self._skt.close()
+            exit(1)
 

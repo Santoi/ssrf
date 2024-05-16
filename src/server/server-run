@@ -7,8 +7,6 @@ arguments = arg_parser.Arguments('server-run')
 ip_addr = arguments.get_arg('host')
 port = arguments.get_arg('port')
 
-# Catch SIGINT
-sigint_handler.activate()
 # init server
 server = server.Server(ip_addr, port)
 server.run()
