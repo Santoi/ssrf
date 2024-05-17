@@ -1,0 +1,100 @@
+[
+    {
+      "id": 1,
+      "name" : "Beach sign",
+      "image":
+        "photo-1714549832814-061dd91b681c.jpeg"
+    },
+    {
+      "id": 2,
+      "name": "Blinds",
+      "image":
+        "photo-1588436706487-9d55d73a39e3.jpeg"
+    },
+    {
+      "id": 3,
+      "name": "blue flowers",
+      "image":
+        "photo-1585821037935-e35488ab3b94.jpeg"
+    },
+    {
+      "id": 4,
+      "name": "lake",
+      "image":
+        "photo-1639588645806-e42a75a37190.jpeg"
+    },
+    {
+      "id": 5,
+      "name": "Northern lights",
+      "image":
+        "photo-1593291600904-660bbd59a758.jpeg"
+    },
+    {
+      "id": 6,
+      "name": "Orange cat sleeping",
+      "image":
+        "photo-1526674183561-4bfb419ab4e5.jpeg"
+    },
+    {
+      "id": 7,
+      "name": "Ice Glacier",
+      "image":
+        "photo-1623501942254-5b629c686045.jpeg"
+    },
+    {
+      "id": 8,
+      "name": "wolf",
+      "image":
+        "photo-1715271040278-9c6fcd6e669b.jpeg"
+    },
+    {
+      "id": 9,
+      "name": "Blue living room",
+      "image":
+        "photo-1526057565006-20beab8dd2ed.jpeg"
+    },
+    {
+      "id": 10,
+      "name": "casette eyes",
+      "image":
+        "photo-1638043882384-d5de29b270d9.jpeg"
+    
+    },
+    {
+      "id": 11,
+      "name": "Swimming pool water",
+      "image":
+        "photo-1568191009535-7d8b407d389a.jpeg"
+    },
+    {
+      "id": 12,
+      "name": "Hot air ballons",
+      "image":
+        "photo-1507608616759-54f48f0af0ee.jpeg"
+    },
+    {
+      "id": 13,
+      "name": "eagle",
+      "image":
+        "photo-1715002383611-63488b956401.jpeg"
+    },
+    {
+      "id": 14,
+      "name": "model underwater",
+      "image":
+        "photo-1480109866847-0b432ceb666a.jpeg"
+    },
+    {
+      "id": 15,
+      "name": "Let it snow",
+      "image":
+        "photo-1484603738253-e5b73679e8cb.jpeg"
+    },
+    {
+      "id": 16,
+      "name": "Wes anderson vibes",
+      "image":
+        "photo-1593031245930-8fa5c48ba673.jpeg"
+    }
+]
+  
