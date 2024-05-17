@@ -1,19 +1,16 @@
 import argparse
 import netifaces as ni
 
-# CLI argument parser.
 class Arguments:
-    def __init__(self, action):
-        self._args = self.__parse(action)
+    def __init__(self):
+        self._args = self.__parse()
 
-    # Parse IP and port.
-    def __parse(self, action):
-        parser = argparse.ArgumentParser()
-        if action == "server-run":
-            parser.add_argument(
-            "-H", "--host", default=self._ip_default(), help="server IP address")
-            parser.add_argument(
-            "-p", "--port", type=int, default="9090", help="server port")
+    def __parse(self):
+        parser = argparse.ArgumentParser(description='Main server commands')
+        parser.add_argument(
+        "-H", "--host", default=self._ip_default(), help="server IP address")
+        parser.add_argument(
+        "-p", "--port", type=int, default="9090", help="server port")
         
         return parser.parse_args()
 

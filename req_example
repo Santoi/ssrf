@@ -1,0 +1,26 @@
+POST /product/stock HTTP/2 # a /product/stock se accede con self.path
+Host: 0a5e0060031be7b4837c5b4000cf0082.web-security-academy.net
+Cookie: session=GCgqf5IVbEDzYYgjO5pvgGdoX6HJR2kS
+Content-Length: 96
+Sec-Ch-Ua: "Not-A.Brand";v="99", "Chromium";v="124"
+Sec-Ch-Ua-Platform: "Windows"
+Sec-Ch-Ua-Mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.60 Safari/537.36
+Content-Type: application/x-www-form-urlencoded
+Accept: */*
+Origin: https://0a5e0060031be7b4837c5b4000cf0082.web-security-academy.net
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: https://0a5e0060031be7b4837c5b4000cf0082.web-security-academy.net/product?productId=2
+Accept-Encoding: gzip, deflate, br
+Accept-Language: es-419,es;q=0.9
+Priority: u=1, i
+
+imageApi=http://192.168.0.1:8080/product/stock/check?productId=2&storeId=1 
+# esta url se convierte en un pedido a 192.168.0.1:8080, 
+# con /product/stock/check?productId=2&storeId=1 como path HTTP
+#
+# esto significa que a 192.168.0.1:8080 le va a llegar un pedido 
+# con POST /product/stock/check?productId=2&storeId=1 HTTP/2
+# como header

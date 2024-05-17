@@ -1,7 +1,6 @@
 import concurrent.futures
 import signal
 import socket
-import request_parser
 
 class Server:
     _BUFSIZE = 10000
@@ -10,10 +9,10 @@ class Server:
         self._skt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._address = (address, port)
         self._skt.bind(self._address)
-        self._skt.listen(8)
+        self._skt.listen()
         # Catch SIGINT
         self._activate_sigint_handler()
-        self._active_clients = []
+        self._active_clients = {}
 
 
     def run(self):
@@ -21,18 +20,17 @@ class Server:
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             while True:
                 # Receive incoming messages and submit them to the thread pool
-                (client_skt, addr) = self._skt.accept()
-                self._active_clients.append(client_skt)
-                data = self._skt.recv(self._BUFSIZE)
-                future = executor.submit(self.handle_request, data, client_skt)
+                client_skt, addr = self._skt.accept()
+                self._active_clients[addr] = client_skt
+                future = executor.submit(self.handle_client, client_skt)
                 future.add_done_callback(lambda f: f.result())
 
-    def handle_request(self, data, client_skt):
+    def handle_client(self, client_skt):
         # TODO: handle request.
-
+        data = client_skt.recv(self._BUFSIZE)
         # Close client connection after handling the request.
         client_skt.close()
-        _active_clients.remove(client_skt)
+        self._active_clients.remove(client_skt)
 
     def _activate_sigint_handler(self):
         signal.signal(signal.SIGINT, self._signal_handler)
