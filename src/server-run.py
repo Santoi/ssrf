@@ -1,6 +1,5 @@
-import server
 from argParser import Arguments
-from imageApiServer import ThreadedHTTPServer, Handler
+from mainServer import ThreadedHTTPServer, Handler
 
 if __name__ == "__main__":
     arguments = Arguments()
@@ -10,4 +9,3 @@ if __name__ == "__main__":
     # init server
     server = ThreadedHTTPServer((ip_addr, port), Handler)
     server.serve_forever()
-

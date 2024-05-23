@@ -10,7 +10,7 @@ class Arguments:
         parser.add_argument(
         "-H", "--host", default=self._ip_default(), help="server IP address")
         parser.add_argument(
-        "-p", "--port", type=int, default="9090", help="server port")
+        "-p", "--port", type=int, default="8080", help="server port")
         
         return parser.parse_args()
 
