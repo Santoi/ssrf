@@ -1,17 +1,33 @@
 import axios from "axios";
 import express from "express";
+import fs from "fs";
+const URL = require('url-parse');
+
+const data = fs.readFileSync("./blacklist.json", 'utf8');
+const blacklist = new Set(JSON.parse(data));
+
+function firewall(hostname: string) {
+  console.log(hostname);
+  if (blacklist.has(hostname)) {
+    throw new Error("Firewalled :(\nInvalid hostname: " + hostname);
+  }
+}
 
 export async function getData(
     req: express.Request,
     res: express.Response
   ) {
     try {
-      const urlToRedirect = req.body.urlToRedirect;
+      console.log(req.body.urlToRedirect);
+      const urlToRedirect = new URL(req.body.urlToRedirect);
       if (!urlToRedirect){
         throw new Error("Url field is missing");
       }
 
-      const response = await axios.get(urlToRedirect, { responseType: 'arraybuffer' });
+      // Firewall
+      firewall(urlToRedirect.hostname);
+
+      const response = await axios.get(urlToRedirect.href, { responseType: 'arraybuffer' });
       if (response.headers['content-type'])
         res.setHeader('Content-Type', response.headers['content-type']);
       res.setHeader('Access-Control-Allow-Origin', '*');
@@ -35,7 +51,7 @@ export async function getSecret(
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/plain');
     res.end('Dang it, you hacked me!!');
-  }else{
+  } else {
     console.log("firewalled");
     res.status(403).send("Access to this method is forbidden");
   }
