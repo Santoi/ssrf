@@ -37,7 +37,7 @@ export async function getData(
     }
 }
 
-function req_comes_from_out_of_LAN(req: express.Request){
+function req_comes_from_out_of_LAN(req: express.Request) {
   return !req.headers['x-forwarded-host'] || req.headers['x-forwarded-host'] === undefined
 }
 
