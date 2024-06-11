@@ -1,17 +1,5 @@
 import axios from "axios";
 import express from "express";
-import fs from "fs";
-
-const data = fs.readFileSync("./blacklist.json", "utf8");
-const blacklist = new Set(JSON.parse(data));
-
-function hasToFirewall(hostname: string): boolean {
-  console.log("hostname is:", hostname);
-  if (blacklist.has(hostname)) {
-    return true;
-  }
-  return false;
-}
 
 function sendFirewallMessage(res: express.Response) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -30,21 +18,13 @@ export function respondOptions(req: express.Request, res: express.Response) {
 
 export async function getData(req: express.Request, res: express.Response) {
   try {
-    console.log(req.body.urlToRedirect);
-    const urlToRedirect = new URL(req.body.urlToRedirect);
+    const urlToRedirect = req.body.urlToRedirect;
     if (!urlToRedirect) {
       console.log("no url to redirect found");
       throw new Error("Url field is missing");
     }
 
-    // Firewall
-    if (hasToFirewall(urlToRedirect.hostname)) {
-      sendFirewallMessage(res);
-      return;
-    }
-
-    console.log("passed firewall check");
-    const response = await axios.get(urlToRedirect.href, {
+    const response = await axios.get(urlToRedirect, {
       responseType: "arraybuffer",
     });
     if (response.headers["content-type"])
