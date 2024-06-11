@@ -1,6 +1,7 @@
 import axios from "axios";
 import express from "express";
 import fs from "fs";
+const URL = require("url-parse");
 
 const data = fs.readFileSync("./blacklist.json", "utf8");
 const blacklist = new Set(JSON.parse(data));
