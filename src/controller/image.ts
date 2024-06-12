@@ -1,16 +1,39 @@
 import axios from "axios";
 import express from "express";
 import fs from "fs";
+import dns from "node:dns";
 
 const data = fs.readFileSync("./blacklist.json", "utf8");
 const blacklist = new Set(JSON.parse(data));
 
-function hasToFirewall(hostname: string): boolean {
+async function hasToFirewall(hostname: string): Promise<boolean> {
   console.log("hostname is:", hostname);
-  if (blacklist.has(hostname)) {
+  const resolved: string = await resolve(hostname);
+  console.log("resolved domain:", resolved);
+  if (blacklist.has(resolved)) {
     return true;
   }
   return false;
+}
+
+function resolvek(hostname: string): Promise<string[]> {
+  return new Promise<string[]>((resolve, reject) => {
+    dns.resolve(hostname, (err, addresses) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(addresses);
+      }
+    });
+  });
+}
+
+function resolve(hostname: string): Promise<string> {
+  return new Promise<string>((resolve) => {
+    dns.lookup(hostname, (_err, address, _family) => {
+      resolve(address);
+    });
+  });
 }
 
 function sendFirewallMessage(res: express.Response) {
@@ -38,7 +61,7 @@ export async function getData(req: express.Request, res: express.Response) {
     }
 
     // Firewall
-    if (hasToFirewall(urlToRedirect.hostname)) {
+    if (await hasToFirewall(urlToRedirect.hostname)) {
       sendFirewallMessage(res);
       return;
     }
