@@ -33,7 +33,7 @@ export async function getData(req: express.Request, res: express.Response) {
     console.log(req.body.urlToRedirect);
     const urlToRedirect = new URL(req.body.urlToRedirect);
     if (!urlToRedirect) {
-      console.log("no url to redirect found");
+      console.log("No url to redirect found");
       throw new Error("Url field is missing");
     }
 
@@ -52,8 +52,10 @@ export async function getData(req: express.Request, res: express.Response) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.end(response.data);
   } catch (err) {
-    console.log("there was an error", err);
-    res.status(500).send(`${err}`);
+    console.log("there was an error", (err as Error).message);
+    res
+      .status(500)
+      .send(`There was an error fetching: ${(err as Error).message}`);
   }
 }
 
