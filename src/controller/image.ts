@@ -1,5 +1,19 @@
 import axios from "axios";
 import express from "express";
+import fs from "fs";
+
+const URL = require("url-parse");
+
+const data = fs.readFileSync("./whitelist.json", "utf8");
+const whitelist = new Set(JSON.parse(data));
+
+function hasToFirewall(hostname: string): boolean {
+  console.log("hostname is:", hostname);
+  if (whitelist.has(hostname)) {
+    return false;
+  }
+  return true;
+}
 
 function sendFirewallMessage(res: express.Response) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -18,13 +32,20 @@ export function respondOptions(req: express.Request, res: express.Response) {
 
 export async function getData(req: express.Request, res: express.Response) {
   try {
-    const urlToRedirect = req.body.urlToRedirect;
+    const urlToRedirect = new URL(req.body.urlToRedirect);
     if (!urlToRedirect) {
       console.log("no url to redirect found");
       throw new Error("Url field is missing");
     }
+    console.log(urlToRedirect.href);
+    console.log(urlToRedirect.hostname);
 
-    const response = await axios.get(urlToRedirect, {
+    if (hasToFirewall(urlToRedirect.hostname)) {
+      sendFirewallMessage(res);
+      return;
+    }
+
+    const response = await axios.get(urlToRedirect.href, {
       responseType: "arraybuffer",
     });
     if (response.headers["content-type"])
@@ -32,8 +53,8 @@ export async function getData(req: express.Request, res: express.Response) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.end(response.data);
   } catch (err) {
-    console.log("there was an error", err);
-    res.status(500).send(`${err}`);
+    console.log("There was an error", err);
+    res.status(500).send(`${(err as Error).message}`);
   }
 }
 

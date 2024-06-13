@@ -10,5 +10,5 @@ app.use(express.json());
 app.use("", imageRouter);
 
 app.listen(8080, () => {
-  console.log(`[server]: Server is running at port 8200`);
+  console.log(`[server]: Server is running at port 8080`);
 });
