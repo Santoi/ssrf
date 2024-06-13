@@ -16,18 +16,6 @@ async function hasToFirewall(hostname: string): Promise<boolean> {
   return false;
 }
 
-function resolvek(hostname: string): Promise<string[]> {
-  return new Promise<string[]>((resolve, reject) => {
-    dns.resolve(hostname, (err, addresses) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(addresses);
-      }
-    });
-  });
-}
-
 function resolve(hostname: string): Promise<string> {
   return new Promise<string>((resolve) => {
     dns.lookup(hostname, (_err, address, _family) => {
@@ -51,31 +39,50 @@ export function respondOptions(req: express.Request, res: express.Response) {
   return res.status(200).json({});
 }
 
+//returns if checks were passed
+async function checkRedirectionUrl(
+  redirectionUrl: string
+): Promise<string | null> {
+  console.log(redirectionUrl);
+  const urlToRedirect = new URL(redirectionUrl);
+  if (!urlToRedirect) {
+    console.log("No url to redirect found");
+    throw new Error("Url field is missing");
+  }
+
+  // Firewall
+  if (await hasToFirewall(urlToRedirect.hostname)) {
+    return null;
+  }
+  return urlToRedirect.href;
+}
+
 export async function getData(req: express.Request, res: express.Response) {
   try {
-    console.log(req.body.urlToRedirect);
-    const urlToRedirect = new URL(req.body.urlToRedirect);
+    const urlToRedirect = await checkRedirectionUrl(req.body.urlToRedirect);
     if (!urlToRedirect) {
-      console.log("No url to redirect found");
-      throw new Error("Url field is missing");
-    }
-
-    // Firewall
-    if (await hasToFirewall(urlToRedirect.hostname)) {
       sendFirewallMessage(res);
       return;
     }
 
     console.log("passed firewall check");
-    const response = await axios.get(urlToRedirect.href, {
+    const response = await axios.get(urlToRedirect, {
       responseType: "arraybuffer",
+      maxRedirects: 0,
+      validateStatus: (status) => status >= 200 && status < 400,
     });
+
+    if (response.status >= 300 && response.status < 400) {
+      // request wants to redirect
+      throw new Error("Redirection is not allowed");
+    }
+
     if (response.headers["content-type"])
       res.setHeader("Content-Type", response.headers["content-type"]);
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.end(response.data);
   } catch (err) {
-    console.log("there was an error", (err as Error).message);
+    console.log("There was an error", (err as Error).message);
     res
       .status(500)
       .send(`There was an error fetching: ${(err as Error).message}`);
